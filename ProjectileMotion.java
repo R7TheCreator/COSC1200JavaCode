@@ -50,17 +50,57 @@ public class ProjectileMotion {
         }
     }
     public static double getAngle(String playerName, Scanner input){
+        // variables
         boolean isLoop = true;
         double angle = 0;
+        // loop
         while (isLoop){
-            System.out.print(playerName + "Enter an Angle: ");
+            System.out.print(playerName + " Enter an Angle: ");
             angle = input.nextDouble();
-
+            // conditions
             if (angle >= 0 && angle <= 180){
                 isLoop = false;
             }
             else System.out.println("Invalid angle");
         }
         return angle;
+    }
+
+    public static double getPower(String playerName, Scanner input){
+        // variables
+        boolean isLoop = true;
+        double velocity = 0;
+        // loop
+        while (isLoop){
+            System.out.print(playerName + " Enter your Power: ");
+            velocity = input.nextDouble();
+            // conditions
+            if (velocity >= 1 && velocity <= 1000){
+                isLoop = false;
+            }
+            else System.out.println("Invalid velocity");
+        }
+        return velocity;
+    }
+
+    public static double getShot(String playerName, Scanner input, double startingX){
+        // variables
+        double angle = getAngle(playerName, input);
+        double velocity = getPower(playerName, input);
+        double gravity = 9.8;
+
+        // convert radians for java
+        double radians = Math.toRadians(angle);
+
+        // find time
+        double t = (2 * velocity * Math.sin(radians) / gravity);
+
+        // find the lading coordinate
+        double xLanding = (velocity * Math.cos(radians)) * t + startingX;
+
+        // output message
+        System.out.println("The shot landed at: " + xLanding);
+
+        return xLanding;
     }
 }

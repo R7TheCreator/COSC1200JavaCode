@@ -45,7 +45,45 @@ public class ProjectileMotion {
                 System.out.println("Select different names");
             }
 
-            else System.out.println("Your names are: " + playerOne + " and " + playerTwo);
+            else {
+                System.out.println("Your names are: " + playerOne + " and " + playerTwo);
+
+                // determine winner + scores
+                int winner = runGame(playerOne, playerTwo, input);
+
+                input.nextLine();
+
+                if (winner == 1){
+                    playerOneScore++;
+                } else if (winner == 2) {
+                    playerTwoScore++;
+                }
+
+                // scoreboard
+                System.out.println("--- Scoreboard ---");
+                System.out.println(playerOne + ": " + playerOneScore);
+                System.out.println(playerTwo + ": " + playerTwoScore);
+                System.out.println("-------------------");
+
+                // first to 3 wins the entire game
+                if (playerOneScore == 3){
+                    System.out.println(playerOne + " is the overall winner!");
+                    isActive = false;
+                } else if (playerTwoScore == 3) {
+                    System.out.println(playerTwo + " is the overall winner!");
+                    isActive = false;
+                }
+                else {
+                    System.out.print("Press enter to continue, or type 'Q' to quit: ");
+                    String choice = input.nextLine();
+
+                    if (choice.equalsIgnoreCase("Q")){
+                        isActive = false;
+                        System.out.println("Game over. Final Scores - " + playerOne + ": " + playerOneScore);
+                        System.out.println("Game over. Final Scores - " + playerTwo + ": " + playerTwoScore);
+                    }
+                }
+            }
 
         }
     }
@@ -56,12 +94,19 @@ public class ProjectileMotion {
         // loop
         while (isLoop){
             System.out.print(playerName + " Enter an Angle: ");
-            angle = input.nextDouble();
             // conditions
-            if (angle >= 0 && angle <= 180){
-                isLoop = false;
+            if (input.hasNextDouble()){
+                angle = input.nextDouble();
+                if (angle >= 0 && angle <= 180){
+                    isLoop = false;
+                }
+                else System.out.println("Invalid angle. Enter a value between 0 and 180");
             }
-            else System.out.println("Invalid angle");
+            else {
+                System.out.println("Invalid angle.");
+                input.next();
+            }
+
         }
         return angle;
     }
@@ -73,12 +118,21 @@ public class ProjectileMotion {
         // loop
         while (isLoop){
             System.out.print(playerName + " Enter your Power: ");
-            velocity = input.nextDouble();
+
             // conditions
-            if (velocity >= 1 && velocity <= 1000){
-                isLoop = false;
+            if (input.hasNextDouble()){
+                velocity = input.nextDouble();
+                if (velocity >= 1 && velocity <= 1000){
+                    isLoop = false;
+                }
+                else {
+                    System.out.println("Invalid velocity, enter between 1 and 1000");
+                }
             }
-            else System.out.println("Invalid velocity");
+            else {
+                System.out.println("Invalid velocity");
+                input.next();
+            }
         }
         return velocity;
     }
@@ -102,5 +156,41 @@ public class ProjectileMotion {
         System.out.println("The shot landed at: " + xLanding);
 
         return xLanding;
+    }
+
+    public static int runGame(String p1Name, String p2Name, Scanner input){
+        // loop setup
+        boolean isLoop = true;
+
+        // input random
+        Random rand = new Random();
+
+        // set player positions
+        double p1Position = rand.nextDouble() * 120;
+        double p2Position = rand.nextDouble() * 120;
+
+        // player positions
+        System.out.println(p1Name + " Player one position: " + p1Position);
+        System.out.println(p2Name + " Player two position: " + p2Position);
+
+        // main game loop for turns
+        while (isLoop){
+            // player 1 turn
+            double p1Landing = getShot(p1Name, input, p1Position);
+            // check if player 1 hit player 2
+            if (Math.abs(p1Landing - p2Position) < 1){
+                System.out.println("Direct hit, " + p1Name + " wins!");
+                return 1;
+            }
+            // player 2 turn
+            double p2Landing = getShot(p2Name, input, p2Position);
+            // check if player two hit player one
+            if (Math.abs(p2Landing - p1Position) < 1){
+                System.out.println("Direct hit, " + p2Name + " wins!");
+                return 2;
+            }
+        }
+        return 0;
+
     }
 }
